@@ -9,6 +9,9 @@ import androidx.lifecycle.OnLifecycleEvent;
 /**
  * ZhangSuiXu
  * 2021/9/5
+ *
+ * 注意 : 当应用从前退到后台时(用户按下Home键或者任务菜单键),会依次调用Lifecycle.Event.ON_PAUSE 和 Lifecycle.Event.ON_STOP。
+ * 但具有一定的延时，因为系统需要保证因为需要为屏幕旋转，配置发生变化导致的Activity重建的情况预留一定的时间，因为这时程序并未退到后台
  */
 public class ApplicationObserver implements LifecycleObserver {
 
