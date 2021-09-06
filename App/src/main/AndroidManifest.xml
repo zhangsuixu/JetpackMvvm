@@ -3,7 +3,7 @@
     package="com.zx.jetpackmvvm">
 
     <application
-        android:name="com.zx.test.lifecycle.application.TestLifeCycleApplication"
+        android:name="com.zx.test.hilt.TestHiltApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.JetpackMvvm">
         <activity
-            android:name="com.zx.test.viewmodel.TimerActivity"
+            android:name="com.zx.test.hilt.TestHiltActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
