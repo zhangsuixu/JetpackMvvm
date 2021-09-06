@@ -1,4 +1,4 @@
-package com.zx.test.autoservice;
+package com.zx.test.autoservice.demo1;
 
 import android.os.Bundle;
 

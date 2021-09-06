@@ -1,4 +1,4 @@
-package com.zx.test.hilt;
+package com.zx.test.hilt.demo1;
 
 /**
  * ZhangSuiXu
