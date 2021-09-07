@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.JetpackMvvm">
         <activity
-            android:name="com.zx.test.hilt.demo2.TestHiltRoomActivity"
+            android:name="com.zx.test.hilt.demo3.TestHiltViewModelActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

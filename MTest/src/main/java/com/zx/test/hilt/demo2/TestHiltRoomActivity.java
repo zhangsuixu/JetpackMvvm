@@ -36,7 +36,15 @@ public class TestHiltRoomActivity extends AppCompatActivity {
             @Override
             public void run() {
                 List<Book> books = mBookDao.queryBookAll();
-                Log.d("TestHiltRoomActivity",books.size() + "");
+                Log.d("TestHilt",books.size() + "");
+            }
+        }).start();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<Book> books = mBookDao.queryBookAll();
+                Log.d("TestHilt",books.size() + "");
             }
         }).start();
     }

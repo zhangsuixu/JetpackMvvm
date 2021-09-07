@@ -37,6 +37,7 @@ dependencies {
     api 'com.google.auto.service:auto-service:1.0-rc7'
     annotationProcessor 'com.google.auto.service:auto-service:1.0-rc7'
 
+    api 'androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03'
     api 'com.google.dagger:hilt-android:2.38.1'
     annotationProcessor 'com.google.dagger:hilt-android-compiler:2.38.1'
 }
