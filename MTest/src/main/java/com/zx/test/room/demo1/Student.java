@@ -9,20 +9,20 @@ import androidx.room.PrimaryKey;
  * ZhangSuiXu
  * 2021/9/7
  *
- *   @PrimaryKey  定义主键
- *   @ColumnInfo  name= ”age“  设置数据库中存储的字段名为age    typeAffinity = ColumnInfo.TEXT 设置存储类型。 不设置时按public String name进行默认设置
+ * @PrimaryKey 定义主键
+ * @ColumnInfo name= ”age“  设置数据库中存储的字段名为age    typeAffinity = ColumnInfo.TEXT 设置存储类型。 不设置时按public String name进行默认设置
  */
 @Entity(tableName = "student")
 public class Student {
 
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id",typeAffinity = ColumnInfo.INTEGER)
+    @ColumnInfo(name = "id", typeAffinity = ColumnInfo.INTEGER)
     public int id;
 
-    @ColumnInfo(name = "name",typeAffinity = ColumnInfo.TEXT)
+    @ColumnInfo(name = "name", typeAffinity = ColumnInfo.TEXT)
     public String name;
 
-    @ColumnInfo(name = "age",typeAffinity = ColumnInfo.TEXT)
+    @ColumnInfo(name = "age", typeAffinity = ColumnInfo.TEXT)
     public String age;
 
     public Student(int id, String name, String age) {
