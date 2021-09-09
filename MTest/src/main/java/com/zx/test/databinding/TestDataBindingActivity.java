@@ -24,8 +24,10 @@ public class TestDataBindingActivity extends AppCompatActivity {
 //        mViewDataBinding = DataBindingUtil.bind(View.inflate(this, R.layout.act_test_databinding, null));
 //        setContentView(mViewDataBinding.getRoot());
 
-        mViewDataBinding = DataBindingUtil.setContentView(this,R.layout.act_test_databinding);
+        mViewDataBinding = DataBindingUtil.setContentView(this, R.layout.act_test_databinding);
 
-        mViewDataBinding.setBook(new Book("biaoti","zuozhe",1));
+        mViewDataBinding.setBook(new Book("biaoti", "zuozhe", 1));
+
+        mViewDataBinding.setEventHandler(new EventHandleListener(this));
     }
 }

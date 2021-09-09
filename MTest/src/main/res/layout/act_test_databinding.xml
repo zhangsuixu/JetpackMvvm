@@ -7,6 +7,10 @@
             name="book"
             type="com.zx.test.databinding.Book" />
 
+        <variable
+            name="EventHandler"
+            type="com.zx.test.databinding.EventHandleListener" />
+
         <import type="com.zx.test.databinding.BookRatingUtil" />
     </data>
 
@@ -41,6 +45,14 @@
         <!--            android:layout_height="wrap_content"-->
         <!--            android:text="@{String.valueOf(book.rating)}"-->
         <!--            />-->
+
+
+<!--        android:onClick="@{EventHandler.onButtonClicked}"-->
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{EventHandler::onButtonClicked}"
+            android:text="Click me" />
     </LinearLayout>
 
 </layout>
