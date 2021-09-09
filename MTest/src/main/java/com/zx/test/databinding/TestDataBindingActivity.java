@@ -21,8 +21,10 @@ public class TestDataBindingActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mViewDataBinding = DataBindingUtil.bind(View.inflate(this, R.layout.act_test_databinding, null));
-        setContentView(mViewDataBinding.getRoot());
+//        mViewDataBinding = DataBindingUtil.bind(View.inflate(this, R.layout.act_test_databinding, null));
+//        setContentView(mViewDataBinding.getRoot());
+
+        mViewDataBinding = DataBindingUtil.setContentView(this,R.layout.act_test_databinding);
 
         mViewDataBinding.setBook(new Book("biaoti","zuozhe",1));
     }
