@@ -9,7 +9,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 /**
  * ZhangSuiXu
  * 2021/9/6
- *
  */
 @HiltViewModel
 public final class TestHiltViewModel extends ViewModel {
@@ -26,7 +25,7 @@ public final class TestHiltViewModel extends ViewModel {
         this.repository = repository;
     }
 
-    public void test(){
+    public void test() {
         repository.test();
     }
 

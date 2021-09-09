@@ -15,10 +15,15 @@ import dagger.hilt.android.AndroidEntryPoint;
 /**
  * ZhangSuiXu
  * 2021/9/6
+ *
+ * @AndroidEntryPoint
+ * 1. 不支持带泛型的类
+ * 2. 支持抽象的类
+ * 3. 同时ViewModel必须通过ViewModelProvider提供
+ *
  */
 @AndroidEntryPoint
-public class TestHiltViewModelActivity extends AppCompatActivity {
-
+public class TestHiltViewModelActivity extends BaseActivity {
     public TestHiltViewModel mViewModel;
 
     @Override
