@@ -38,8 +38,10 @@ dependencies {
     implementation rootProject.ext.dependencies.converterGson
     /**********************    网络库 end  ****************************/
     /**/
-    /**********************     网络库 start  *************************/
-    api 'androidx.room:room-runtime:2.3.0'
-    annotationProcessor 'androidx.room:room-compiler:2.3.0'
-    /**********************    网络库 end  ****************************/
+    /**********************     数据库 start  *************************/
+    implementation rootProject.ext.dependencies.room_runtime
+    implementation rootProject.ext.dependencies.room_rxjava3
+    implementation rootProject.ext.dependencies.room_guava
+    annotationProcessor rootProject.ext.dependencies.room_compiler
+    /**********************    数据库 end  ****************************/
 }
