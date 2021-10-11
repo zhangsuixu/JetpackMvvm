@@ -3,13 +3,13 @@ plugins {
 }
 
 android {
-    compileSdk 31
+    compileSdkVersion rootProject.ext.android.compileSdkVersion
 
     defaultConfig {
-        minSdk 21
-        targetSdk 31
-        versionCode 1
-        versionName "1.0"
+        minSdk rootProject.ext.android.minSdkVersion
+        targetSdk rootProject.ext.android.targetSdkVersion
+        versionCode rootProject.ext.android.versionCode
+        versionName rootProject.ext.android.versionName
     }
 
     buildTypes {
@@ -25,8 +25,21 @@ android {
 }
 
 dependencies {
-    api project(path: ':AppCommon')
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
+    /**********************    通用组件 start  ************************/
+    api project(path: ':AppCommon')
+    /**********************    通用组件 end  ************************/
+    /**/
+    /**********************     网络库 start  *************************/
+    implementation rootProject.ext.dependencies.retrofit2
+    implementation rootProject.ext.dependencies.okhttp3
+    implementation rootProject.ext.dependencies.okhttpUrlConnection
+    implementation rootProject.ext.dependencies.converterGson
+    /**********************    网络库 end  ****************************/
+    /**/
+    /**********************     网络库 start  *************************/
     api 'androidx.room:room-runtime:2.3.0'
     annotationProcessor 'androidx.room:room-compiler:2.3.0'
+    /**********************    网络库 end  ****************************/
 }
