@@ -32,6 +32,6 @@ android {
 dependencies {
     implementation project(path: ':AppUI')
     implementation project(path: ':MTest')
-
+    implementation project(path: ':MDownload')
 
 }
