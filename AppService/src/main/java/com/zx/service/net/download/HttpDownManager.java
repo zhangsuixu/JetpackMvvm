@@ -22,9 +22,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.annotations.NonNull;
-import io.reactivex.rxjava3.core.Observer;
-import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.functions.Function;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
@@ -82,20 +79,16 @@ public class HttpDownManager {
             subMap.get(info.getUrl()).setDownInfo(info);
             return;
         }
-        /*添加回调处理类*/
-        ProgressDownSubscriber subscriber = new ProgressDownSubscriber(info, handler);
-        /*记录回调sub*/
-        subMap.put(info.getUrl(), subscriber);
-        /*获取service，多次请求公用一个sercie*/
-        ApiService httpService;
+        ProgressDownSubscriber subscriber = new ProgressDownSubscriber(info, handler);   /*添加回调处理类*/
+        subMap.put(info.getUrl(), subscriber);/*记录回调sub*/
+        ApiService httpService;  /*获取service，多次请求公用一个sercie*/
         if (downInfos.contains(info)) {
             httpService = info.getService();
         } else {
             DownloadInterceptor interceptor = new DownloadInterceptor(subscriber);
             OkHttpClient.Builder builder = new OkHttpClient.Builder();
-            //手动创建一个OkHttpClient并设置超时时间
-            builder.connectTimeout(info.getConnectonTime(), TimeUnit.SECONDS);
-//            builder.addInterceptor(interceptor);
+            builder.connectTimeout(info.getConnectonTime(), TimeUnit.SECONDS);    //手动创建一个OkHttpClient并设置超时时间
+            builder.addInterceptor(interceptor);
 
             Retrofit retrofit = new Retrofit.Builder()
                     .client(builder.build())
@@ -125,28 +118,7 @@ public class HttpDownManager {
                 /*回调线程*/
                 .observeOn(AndroidSchedulers.mainThread())
                 /*数据回调*/
-                .subscribe(new Observer<Object>() {
-                    @Override
-                    public void onSubscribe(@NonNull Disposable d) {
-                        Log.d("11111111111111","测试1 onSubscribe");
-                    }
-
-                    @Override
-                    public void onNext(@NonNull Object o) {
-                        Log.d("11111111111111","测试1 onNext");
-                    }
-
-                    @Override
-                    public void onError(@NonNull Throwable e) {
-                        Log.d("11111111111111","测试1 onError");
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.d("11111111111111","测试1 onComplete");
-                    }
-                });
-
+                .subscribe(subscriber);
     }
 
 
@@ -232,17 +204,17 @@ public class HttpDownManager {
      * 写入文件
      */
     public void writeCaches(ResponseBody responseBody, File file, DownloadInfoPO info) {
+        RandomAccessFile randomAccessFile = null;
+        FileChannel channelOut = null;
+        InputStream inputStream = null;
+
         try {
-            RandomAccessFile randomAccessFile = null;
-            FileChannel channelOut = null;
-            InputStream inputStream = null;
             try {
                 if (!file.getParentFile().exists())
                     file.getParentFile().mkdirs();
 
                 long allLength = 0 == info.getCountLength() ? responseBody.contentLength() :
                         info.getReadLength() + responseBody.contentLength();
-
                 inputStream = responseBody.byteStream();
                 randomAccessFile = new RandomAccessFile(file, "rwd");
                 channelOut = randomAccessFile.getChannel();
