@@ -2,7 +2,6 @@ package com.zx.service.net.download;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 
 import com.zx.common.constant.DownState;
 import com.zx.service.entity.po.DownloadInfoPO;
@@ -29,6 +28,9 @@ import okhttp3.ResponseBody;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import rx.Observable;
+import rx.Scheduler;
+import rx.Subscriber;
 
 /**
  * http下载处理类
@@ -73,6 +75,7 @@ public class HttpDownManager {
     /**
      * 开始下载
      */
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public void startDown(final DownloadInfoPO info) {
         /*正在下载不处理*/
         if (info == null || subMap.get(info.getUrl()) != null) {
@@ -101,6 +104,7 @@ public class HttpDownManager {
             info.setService(httpService);
             downInfos.add(info);
         }
+
         /*得到rx对象-上一次下載的位置開始下載*/
         httpService.download("bytes=" + info.getReadLength() + "-", info.getUrl())
                 /*指定线程*/
@@ -122,7 +126,6 @@ public class HttpDownManager {
                 .subscribe(subscriber);
     }
 
-
     /**
      * 停止下载
      */
@@ -132,7 +135,7 @@ public class HttpDownManager {
         info.getListener().onStop();
         if (subMap.containsKey(info.getUrl())) {
             ProgressDownSubscriber subscriber = subMap.get(info.getUrl());
-//            subscriber.unsubscribe();
+            subscriber.unsubscribe();
             subMap.remove(info.getUrl());
         }
         /*保存数据库信息和本地文件*/
@@ -154,7 +157,7 @@ public class HttpDownManager {
 //            subscriber.unsubscribe();
             subMap.remove(info.getUrl());
         }
-        /*这里需要讲info信息写入到数据中，可自由扩展，用自己项目的数据库*/
+        /*这里需要将info信息写入到数据中，可自由扩展，用自己项目的数据库*/
 //        db.update(info);
     }
 

@@ -24,6 +24,7 @@ public class ProgressDownSubscriber<T> implements DownloadProgressListener, Obse
     /*下载数据*/
     private DownloadInfoPO downInfo;
     private Handler handler;
+    private Disposable mDisposable;
 
     public ProgressDownSubscriber(DownloadInfoPO downInfo, Handler handler) {
         this.mSubscriberOnNextListener = new SoftReference<>(downInfo.getListener());
@@ -51,7 +52,6 @@ public class ProgressDownSubscriber<T> implements DownloadProgressListener, Obse
             if (downInfo.getState() == DownState.PAUSE || downInfo.getState() == DownState.STOP)
                 return;
             downInfo.setState(DownState.DOWN);
-
             mSubscriberOnNextListener.get().updateProgress(downInfo.getReadLength(), downInfo.getCountLength());
         });
     }
@@ -62,11 +62,20 @@ public class ProgressDownSubscriber<T> implements DownloadProgressListener, Obse
      */
     @Override
     public void onSubscribe(@NonNull Disposable d) {
+        mDisposable = d;
+
         if (mSubscriberOnNextListener.get() != null) {
             mSubscriberOnNextListener.get().onStart();
         }
         downInfo.setState(DownState.START);
     }
+
+    public void unsubscribe() {
+        if (mDisposable != null && !mDisposable.isDisposed()) {
+            mDisposable.dispose();
+        }
+    }
+
 
     /**
      * 将onNext方法中的返回结果交给Activity或Fragment自己处理

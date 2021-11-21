@@ -17,6 +17,7 @@ import com.download.databinding.RvDownloadListItemBinding;
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
+import com.zx.common.constant.DownState;
 import com.zx.common.view.recycleview.BaseAdapter;
 import com.zx.common.view.recycleview.BaseRecycleViewHolder;
 import com.zx.service.entity.po.DownloadInfoPO;
@@ -60,36 +61,43 @@ public class DownloadActivity extends AppCompatActivity {
                 holder.getBindings().download.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        data.setListener(new HttpDownOnNextListener() {
-                            @Override
-                            public void onNext(Object o) {
-                                Log.d("DownloadActivity", "onNext");
-                            }
+                        if (data.getState() == DownState.START) {
+                            data.setListener(new HttpDownOnNextListener() {
+                                @Override
+                                public void onNext(Object o) {
+                                    Log.d("DownloadActivity", "onNext");
+                                }
 
-                            @Override
-                            public void onStart() {
-                                Log.d("DownloadActivity", "onStart");
-                            }
+                                @Override
+                                public void onStart() {
+                                    Log.d("DownloadActivity", "onStart");
+                                }
 
-                            @Override
-                            public void onComplete() {
-                                Log.d("DownloadActivity", "onComplete");
-                            }
+                                @Override
+                                public void onComplete() {
+                                    Log.d("DownloadActivity", "onComplete");
+                                }
 
-                            @Override
-                            public void updateProgress(long readLength, long countLength) {
-                                DownloadActivity.this.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Log.d("DownloadActivity", readLength + "--- updateProgress --- " + countLength + "  countLength");
-                                        holder.getBindings().progress.setText(readLength + "---" + countLength);
-                                    }
-                                });
-                            }
-                        });
-                        HttpDownManager.getInstance().startDown(data);
+                                @Override
+                                public void updateProgress(long readLength, long countLength) {
+                                    DownloadActivity.this.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Log.d("DownloadActivity", readLength + "--- updateProgress --- " + countLength + "  countLength");
+                                            holder.getBindings().progress.setText(readLength + "---" + countLength);
+                                        }
+                                    });
+                                }
+                            });
+                            HttpDownManager.getInstance().startDown(data);
+                        }
                     }
                 });
+
+                holder.getBindings().pause.setOnClickListener(v -> {
+                      HttpDownManager.getInstance().stopDown(data);
+                });
+
             }
         };
         baseAdapter.setData(getData());
@@ -117,8 +125,6 @@ public class DownloadActivity extends AppCompatActivity {
     }
 
     public void downloadFile() {
-
-
 //        Observable.create(new ObservableOnSubscribe<Object>() {
 //            @Override
 //            public void subscribe(@NonNull ObservableEmitter<Object> emitter) throws Throwable {
