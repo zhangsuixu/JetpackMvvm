@@ -87,7 +87,8 @@ public class HttpDownManager {
         } else {
             DownloadInterceptor interceptor = new DownloadInterceptor(subscriber);
             OkHttpClient.Builder builder = new OkHttpClient.Builder();
-            builder.connectTimeout(info.getConnectonTime(), TimeUnit.SECONDS);    //手动创建一个OkHttpClient并设置超时时间
+            builder.connectTimeout(1, TimeUnit.MINUTES);    //手动创建一个OkHttpClient并设置超时时间
+//            builder.protocols(Collections.singletonList(Protocol.HTTP_1_1));
             builder.addInterceptor(interceptor);
 
             Retrofit retrofit = new Retrofit.Builder()
@@ -199,6 +200,7 @@ public class HttpDownManager {
         downInfos.remove(info);
     }
 
+    private Long mDownloadLength;
 
     /**
      * 写入文件
@@ -208,6 +210,8 @@ public class HttpDownManager {
         FileChannel channelOut = null;
         InputStream inputStream = null;
 
+        mDownloadLength = 0L;
+
         try {
             try {
                 if (!file.getParentFile().exists())
@@ -216,14 +220,25 @@ public class HttpDownManager {
                 long allLength = 0 == info.getCountLength() ? responseBody.contentLength() :
                         info.getReadLength() + responseBody.contentLength();
                 inputStream = responseBody.byteStream();
+
                 randomAccessFile = new RandomAccessFile(file, "rwd");
                 channelOut = randomAccessFile.getChannel();
                 MappedByteBuffer mappedBuffer = channelOut.map(FileChannel.MapMode.READ_WRITE,
                         info.getReadLength(), allLength - info.getReadLength());
                 byte[] buffer = new byte[1024 * 4];
-                int len;
-                while ((len = inputStream.read(buffer)) != -1) {
+                int len = 0;
+                while (true) {
+                    //记录 鸿蒙系统下载过程会异常关闭流(https://yunpan.aliyun.com/downloads/apps/desktop/aDrive.exe?spm=aliyundrive.sign.0.0.13876c75mvMLGM&file=aDrive.exe)
+                    len = inputStream.read(buffer);
+
+                    if (len == -1) {
+                        break;
+                    }
+
                     mappedBuffer.put(buffer, 0, len);
+                    mDownloadLength += len;
+//                    Log.d("111111111111111111", "downloading progress : " + mDownloadLength
+//                            + " -- allLength : " + allLength);
                 }
             } catch (IOException e) {
                 throw new HttpTimeException(e.getMessage());

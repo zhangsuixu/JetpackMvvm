@@ -1,10 +1,10 @@
 ext {
-    android = [compileSdkVersion       : 31,
+    android = [compileSdkVersion       : 30,
                minSdkVersion           : 21,
-               targetSdkVersion        : 31,
+               targetSdkVersion        : 30,
                versionCode             : 100001,
                versionName             : "1.0.1",
-               androidSupportSdkVersion: "31.0.0",
+               androidSupportSdkVersion: "30.0.0",
     ]
 
     dependencies = [

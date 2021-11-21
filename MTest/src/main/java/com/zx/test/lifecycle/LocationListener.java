@@ -1,9 +1,9 @@
 package com.zx.test.lifecycle;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
@@ -17,7 +17,7 @@ public class LocationListener implements LifecycleObserver {
     private OnLocationChangeListener mOnLocationChangeListener;
     private Context mContext;
 
-    public LocationListener(Activity context, OnLocationChangeListener listener) {
+    public LocationListener(AppCompatActivity context, OnLocationChangeListener listener) {
         mOnLocationChangeListener = listener;
         mContext = context;
         Log.d("LifeCycle", "initLocationManager()");

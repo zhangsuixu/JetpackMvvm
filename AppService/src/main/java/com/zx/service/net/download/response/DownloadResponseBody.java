@@ -52,8 +52,9 @@ public class DownloadResponseBody extends ResponseBody {
                 long bytesRead = super.read(sink, byteCount);
                 // read() returns the number of bytes read, or -1 if this source is exhausted.
                 totalBytesRead += bytesRead != -1 ? bytesRead : 0;
-                Log.d("1111111111111",totalBytesRead + "----" + responseBody.contentLength());
                 if (null != progressListener) {
+                    Log.d("111111111111111111", "downloading progress : " + totalBytesRead
+                            + " -- allLength : " + responseBody.contentLength());
                     progressListener.update(totalBytesRead, responseBody.contentLength(), bytesRead == -1);
                 }
                 return bytesRead;

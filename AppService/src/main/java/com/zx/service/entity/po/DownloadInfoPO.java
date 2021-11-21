@@ -12,8 +12,8 @@ import com.zx.service.net.download.listener.HttpDownOnNextListener;
 
 /**
  * ZhangSuiXu
- * 2021/9/7
  */
+@SuppressWarnings("rawtypes")
 @Entity(tableName = "download_info")
 public class DownloadInfoPO {
 
@@ -34,57 +34,43 @@ public class DownloadInfoPO {
     @Ignore
     private HttpDownOnNextListener listener;
     /*超时设置*/
-    private int connectonTime = 6;
+    private int connectionTime = 6;
     /*state状态数据库保存*/
-    private int stateInte;
+    private int downState;
     /*url*/
     private String url;
-    /*是否需要实时更新下载进度,避免线程的多次切换*/
-    private boolean updateProgress;
 
-
+    @Ignore
     public DownloadInfoPO(String url, HttpDownOnNextListener listener) {
         setUrl(url);
         setListener(listener);
     }
 
+    @Ignore
     public DownloadInfoPO(String url) {
         setUrl(url);
     }
 
-    @Keep
-    public DownloadInfoPO(long id, String savePath, long countLength, long readLength,
-                    int connectonTime, int stateInte, String url) {
-        this.id = id;
-        this.savePath = savePath;
-        this.countLength = countLength;
-        this.readLength = readLength;
-        this.connectonTime = connectonTime;
-        this.stateInte = stateInte;
-        this.url = url;
-    }
-
-    @Keep
+    @Ignore
     public DownloadInfoPO() {
         readLength = 0;
         countLength = 0;
-        stateInte = DownState.START.getState();
+        downState = DownState.START.getState();
     }
 
     public DownloadInfoPO(long id, String savePath, long countLength, long readLength,
-                    int connectonTime, int stateInte, String url, boolean updateProgress) {
+                          int connectionTime, int downState, String url) {
         this.id = id;
         this.savePath = savePath;
         this.countLength = countLength;
         this.readLength = readLength;
-        this.connectonTime = connectonTime;
-        this.stateInte = stateInte;
+        this.connectionTime = connectionTime;
+        this.downState = downState;
         this.url = url;
-        this.updateProgress = updateProgress;
     }
 
     public DownState getState() {
-        switch (getStateInte()) {
+        switch (getDownState()) {
             case 0:
                 return DownState.START;//未开始
             case 1:
@@ -101,25 +87,17 @@ public class DownloadInfoPO {
         }
     }
 
-    public boolean isUpdateProgress() {
-        return updateProgress;
-    }
-
-    public void setUpdateProgress(boolean updateProgress) {
-        this.updateProgress = updateProgress;
-    }
-
     public void setState(DownState state) {
-        setStateInte(state.getState());
+        setDownState(state.getState());
     }
 
 
-    public int getStateInte() {
-        return stateInte;
+    public int getDownState() {
+        return downState;
     }
 
-    public void setStateInte(int stateInte) {
-        this.stateInte = stateInte;
+    public void setDownState(int downState) {
+        this.downState = downState;
     }
 
     public HttpDownOnNextListener getListener() {
@@ -180,16 +158,11 @@ public class DownloadInfoPO {
         this.id = id;
     }
 
-    public int getConnectonTime() {
-        return this.connectonTime;
+    public int getConnectionTime() {
+        return this.connectionTime;
     }
 
-    public void setConnectonTime(int connectonTime) {
-        this.connectonTime = connectonTime;
+    public void setConnectionTime(int connectionTime) {
+        this.connectionTime = connectionTime;
     }
-
-    public boolean getUpdateProgress() {
-        return this.updateProgress;
-    }
-
 }

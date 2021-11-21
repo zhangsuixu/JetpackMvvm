@@ -2,7 +2,6 @@ package com.zx.service.net.download;
 
 
 import android.os.Handler;
-import android.util.Log;
 
 import com.zx.common.constant.DownState;
 import com.zx.service.entity.po.DownloadInfoPO;
@@ -17,10 +16,8 @@ import io.reactivex.rxjava3.disposables.Disposable;
 
 /**
  * 断点下载处理类Subscriber
- * 用于在Http请求开始时，自动显示一个ProgressDialog
- * 在Http请求结束是，关闭ProgressDialog
- * 调用者自己对请求数据进行处理
  */
+@SuppressWarnings({"SingleStatementInBlock", "unchecked", "rawtypes"})
 public class ProgressDownSubscriber<T> implements DownloadProgressListener, Observer<T> {
     //弱引用结果回调
     private SoftReference<HttpDownOnNextListener> mSubscriberOnNextListener;
@@ -48,17 +45,14 @@ public class ProgressDownSubscriber<T> implements DownloadProgressListener, Obse
         }
         downInfo.setReadLength(read);
 
-        if (mSubscriberOnNextListener.get() == null || !downInfo.isUpdateProgress()) return;
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                /*如果暂停或者停止状态延迟，不需要继续发送回调，影响显示*/
-//                if (downInfo.getState() == DownState.PAUSE || downInfo.getState() == DownState.STOP)
-//                    return;
-                downInfo.setState(DownState.DOWN);
+        if (mSubscriberOnNextListener.get() == null) return;
+        handler.post(() -> {
+            /*如果暂停或者停止状态延迟，不需要继续发送回调，影响显示*/
+            if (downInfo.getState() == DownState.PAUSE || downInfo.getState() == DownState.STOP)
+                return;
+            downInfo.setState(DownState.DOWN);
 
-                mSubscriberOnNextListener.get().updateProgress(downInfo.getReadLength(), downInfo.getCountLength());
-            }
+            mSubscriberOnNextListener.get().updateProgress(downInfo.getReadLength(), downInfo.getCountLength());
         });
     }
 
@@ -79,6 +73,7 @@ public class ProgressDownSubscriber<T> implements DownloadProgressListener, Obse
      *
      * @param t 创建Subscriber时的泛型类型
      */
+
     @Override
     public void onNext(@NonNull T t) {
         if (mSubscriberOnNextListener.get() != null) {

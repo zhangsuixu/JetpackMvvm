@@ -20,7 +20,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
  * fallbackToDestructiveMigration()
  * 1. 当Room升级过程中没有匹配到相应的Migration，则会升级失败，通过上述方法可以在出现异常时，重新创建数据表。(重新创建旧数据旧不在了)
  */
-@Database(entities = {Student.class}, version = 3, exportSchema = false)
+//@Database(entities = {Student.class}, version = 3, exportSchema = false)
 public abstract class MyDatabase extends RoomDatabase {
 
     private static final String DATABASE_NAME = "test_room";

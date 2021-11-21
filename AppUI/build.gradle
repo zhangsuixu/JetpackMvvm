@@ -26,4 +26,5 @@ android {
 
 dependencies {
     api project(path: ':AppService')
+    api 'com.github.getActivity:XXPermissions:13.2'
 }
