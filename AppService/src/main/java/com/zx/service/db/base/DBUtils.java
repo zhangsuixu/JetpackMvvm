@@ -1,11 +1,10 @@
 package com.zx.service.db.base;
 
-import android.content.Context;
-
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
+import com.zx.common.base.BaseApplication;
 import com.zx.service.db.dao.DownloadInfoDao;
 import com.zx.service.entity.po.DownloadInfoPO;
 
@@ -27,11 +26,10 @@ public abstract class DBUtils extends RoomDatabase {
 
     private static DBUtils databaseInstance;
 
-    public static synchronized DBUtils getInstance(Context context) {
+    public static synchronized DBUtils getInstance() {
         if (databaseInstance == null) {
-            databaseInstance = Room.databaseBuilder(context.getApplicationContext(), DBUtils.class, DATABASE_NAME)
+            databaseInstance = Room.databaseBuilder(BaseApplication.getContext(), DBUtils.class, DATABASE_NAME)
                     .fallbackToDestructiveMigration()
-//                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                     .build();
         }
         return databaseInstance;

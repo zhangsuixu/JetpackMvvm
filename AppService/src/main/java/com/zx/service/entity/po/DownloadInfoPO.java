@@ -1,9 +1,8 @@
 package com.zx.service.entity.po;
 
-import androidx.annotation.Keep;
-import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
+import androidx.room.OnConflictStrategy;
 import androidx.room.PrimaryKey;
 
 import com.zx.common.constant.DownState;
@@ -17,8 +16,7 @@ import com.zx.service.net.download.listener.HttpDownOnNextListener;
 @Entity(tableName = "download_info")
 public class DownloadInfoPO {
 
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id", typeAffinity = ColumnInfo.INTEGER)
+    @PrimaryKey
     private long id;
 
     /*存储位置*/

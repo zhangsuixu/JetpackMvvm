@@ -17,7 +17,6 @@ import com.download.databinding.RvDownloadListItemBinding;
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
-import com.zx.common.constant.DownState;
 import com.zx.common.view.recycleview.BaseAdapter;
 import com.zx.common.view.recycleview.BaseRecycleViewHolder;
 import com.zx.service.entity.po.DownloadInfoPO;
@@ -61,41 +60,41 @@ public class DownloadActivity extends AppCompatActivity {
                 holder.getBindings().download.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (data.getState() == DownState.START) {
-                            data.setListener(new HttpDownOnNextListener() {
-                                @Override
-                                public void onNext(Object o) {
-                                    Log.d("DownloadActivity", "onNext");
-                                }
+                        data.setListener(new HttpDownOnNextListener() {
+                            @Override
+                            public void onNext(Object o) {
+                                Log.d("DownloadActivity", "onNext");
+                            }
 
-                                @Override
-                                public void onStart() {
-                                    Log.d("DownloadActivity", "onStart");
-                                }
+                            @Override
+                            public void onStart() {
+                                Log.d("DownloadActivity", "onStart");
+                            }
 
-                                @Override
-                                public void onComplete() {
-                                    Log.d("DownloadActivity", "onComplete");
-                                }
+                            @Override
+                            public void onComplete() {
+                                Log.d("DownloadActivity", "onComplete");
+                            }
 
-                                @Override
-                                public void updateProgress(long readLength, long countLength) {
-                                    DownloadActivity.this.runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Log.d("DownloadActivity", readLength + "--- updateProgress --- " + countLength + "  countLength");
-                                            holder.getBindings().progress.setText(readLength + "---" + countLength);
-                                        }
-                                    });
-                                }
-                            });
-                            HttpDownManager.getInstance().startDown(data);
-                        }
+                            @Override
+                            public void updateProgress(long readLength, long countLength) {
+                                DownloadActivity.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Log.d("DownloadActivity", readLength + "--- updateProgress --- " + countLength + "  countLength");
+                                        holder.getBindings().progress.setText(readLength + "---" + countLength);
+                                        data.setReadLength(readLength);
+                                        data.setCountLength(countLength);
+                                    }
+                                });
+                            }
+                        });
+                        HttpDownManager.getInstance().startDown(data);
                     }
                 });
 
                 holder.getBindings().pause.setOnClickListener(v -> {
-                      HttpDownManager.getInstance().stopDown(data);
+                    HttpDownManager.getInstance().stopDown(data);
                 });
 
             }
@@ -111,6 +110,7 @@ public class DownloadActivity extends AppCompatActivity {
                 (Environment.DIRECTORY_DOWNLOADS), "a1" + ".apk");
         Log.d("DownloadActivity", "file path :" + outputFile.getAbsolutePath());
         DownloadInfoPO apkApi = new DownloadInfoPO(URL1);
+        apkApi.setId(1);
         apkApi.setSavePath(outputFile.getAbsolutePath());
         objects.add(apkApi);
 
@@ -118,6 +118,7 @@ public class DownloadActivity extends AppCompatActivity {
                 (Environment.DIRECTORY_DOWNLOADS), "a2" + ".apk");
         Log.d("DownloadActivity", "file path :" + outputFile.getAbsolutePath());
         apkApi = new DownloadInfoPO(URL2);
+        apkApi.setId(2);
         apkApi.setSavePath(outputFile.getAbsolutePath());
         objects.add(apkApi);
 
@@ -125,18 +126,7 @@ public class DownloadActivity extends AppCompatActivity {
     }
 
     public void downloadFile() {
-//        Observable.create(new ObservableOnSubscribe<Object>() {
-//            @Override
-//            public void subscribe(@NonNull ObservableEmitter<Object> emitter) throws Throwable {
-//                DBUtils.getInstance(DownloadActivity.this).downloadInfoDao().insert(apkApi);
-//                List<DownloadInfoPO> downloadInfoPOS = DBUtils.getInstance(DownloadActivity.this).downloadInfoDao().queryDownloadInfoList();
-//                if (downloadInfoPOS != null) {
-//                    Log.d("11111111111111", downloadInfoPOS.size() + "测试测试");
-//                }
-//            }
-//        }).subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe();
+
     }
 
     private void requestPermissions() {

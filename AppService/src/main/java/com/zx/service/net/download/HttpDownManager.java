@@ -2,8 +2,14 @@ package com.zx.service.net.download;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import com.zx.common.constant.DownState;
+import com.zx.common.utils.FileUtils;
+import com.zx.service.db.base.DBUtils;
+import com.zx.service.db.dao.DownloadInfoDao;
 import com.zx.service.entity.po.DownloadInfoPO;
 import com.zx.service.net.ApiService;
 import com.zx.service.net.download.exception.HttpTimeException;
@@ -17,10 +23,14 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.ObservableEmitter;
+import io.reactivex.rxjava3.core.ObservableOnSubscribe;
 import io.reactivex.rxjava3.functions.Function;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
@@ -28,38 +38,30 @@ import okhttp3.ResponseBody;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-import rx.Observable;
-import rx.Scheduler;
-import rx.Subscriber;
 
 /**
  * http下载处理类
  * Created by WZG on 2016/7/16.
  */
+@SuppressWarnings("rawtypes")
 public class HttpDownManager {
-    /*记录下载数据*/
-    private Set<DownloadInfoPO> downInfos;
-    /*回调sub队列*/
-    private HashMap<String, ProgressDownSubscriber> subMap;
-    /*单利对象*/
+
+    private final Set<DownloadInfoPO> mDownInfoList;    /*记录下载数据*/
+    private final HashMap<String, ProgressDownSubscriber> subMap;  /*回调sub队列*/
     private volatile static HttpDownManager INSTANCE;
+
     /*数据库类*/
-//    private DbDownUtil db;
+    private DownloadInfoDao mDownloadInfoDao;
     /*下载进度回掉主线程*/
     private Handler handler;
 
     private HttpDownManager() {
-        downInfos = new HashSet<>();
+        mDownInfoList = new HashSet<>();
         subMap = new HashMap<>();
-//        db = DbDownUtil.getInstance();
+        mDownloadInfoDao = DBUtils.getInstance().downloadInfoDao();
         handler = new Handler(Looper.getMainLooper());
     }
 
-    /**
-     * 获取单例
-     *
-     * @return
-     */
     public static HttpDownManager getInstance() {
         if (INSTANCE == null) {
             synchronized (HttpDownManager.class) {
@@ -71,10 +73,6 @@ public class HttpDownManager {
         return INSTANCE;
     }
 
-
-    /**
-     * 开始下载
-     */
     @SuppressWarnings({"rawtypes", "unchecked"})
     public void startDown(final DownloadInfoPO info) {
         /*正在下载不处理*/
@@ -85,7 +83,7 @@ public class HttpDownManager {
         ProgressDownSubscriber subscriber = new ProgressDownSubscriber(info, handler);   /*添加回调处理类*/
         subMap.put(info.getUrl(), subscriber);/*记录回调sub*/
         ApiService httpService;  /*获取service，多次请求公用一个sercie*/
-        if (downInfos.contains(info)) {
+        if (mDownInfoList.contains(info)) {
             httpService = info.getService();
         } else {
             DownloadInterceptor interceptor = new DownloadInterceptor(subscriber);
@@ -102,7 +100,7 @@ public class HttpDownManager {
                     .build();
             httpService = retrofit.create(ApiService.class);
             info.setService(httpService);
-            downInfos.add(info);
+            mDownInfoList.add(info);
         }
 
         /*得到rx对象-上一次下載的位置開始下載*/
@@ -126,102 +124,91 @@ public class HttpDownManager {
                 .subscribe(subscriber);
     }
 
-    /**
-     * 停止下载
-     */
     public void stopDown(DownloadInfoPO info) {
         if (info == null) return;
         info.setState(DownState.STOP);
         info.getListener().onStop();
         if (subMap.containsKey(info.getUrl())) {
             ProgressDownSubscriber subscriber = subMap.get(info.getUrl());
-            subscriber.unsubscribe();
+            if (subscriber != null) {
+                subscriber.unsubscribe();
+            }
             subMap.remove(info.getUrl());
         }
-        /*保存数据库信息和本地文件*/
-//        db.save(info);
+        cacheData(info);
     }
 
+    private void cacheData(DownloadInfoPO info) {
+        Observable.create(new ObservableOnSubscribe<Object>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<Object> emitter) throws Throwable {
+                mDownloadInfoDao.insert(info);
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
+    }
 
-    /**
-     * 暂停下载
-     *
-     * @param info
-     */
     public void pause(DownloadInfoPO info) {
         if (info == null) return;
         info.setState(DownState.PAUSE);
         info.getListener().onPuase();
         if (subMap.containsKey(info.getUrl())) {
             ProgressDownSubscriber subscriber = subMap.get(info.getUrl());
-//            subscriber.unsubscribe();
+            if (subscriber != null) {
+                subscriber.unsubscribe();
+            }
             subMap.remove(info.getUrl());
         }
-        /*这里需要将info信息写入到数据中，可自由扩展，用自己项目的数据库*/
-//        db.update(info);
+        cacheData(info);
     }
 
-    /**
-     * 停止全部下载
-     */
     public void stopAllDown() {
-        for (DownloadInfoPO downInfo : downInfos) {
+        for (DownloadInfoPO downInfo : mDownInfoList) {
             stopDown(downInfo);
         }
         subMap.clear();
-        downInfos.clear();
+        mDownInfoList.clear();
     }
 
-    /**
-     * 暂停全部下载
-     */
     public void pauseAll() {
-        for (DownloadInfoPO downInfo : downInfos) {
+        for (DownloadInfoPO downInfo : mDownInfoList) {
             pause(downInfo);
         }
         subMap.clear();
-        downInfos.clear();
+        mDownInfoList.clear();
     }
 
-
-    /**
-     * 返回全部正在下载的数据
-     *
-     * @return
-     */
-    public Set<DownloadInfoPO> getDownInfos() {
-        return downInfos;
+    public Set<DownloadInfoPO> getDownInfoList() {
+        return mDownInfoList;
     }
 
     /**
      * 移除下载数据
-     *
-     * @param info
      */
     public void remove(DownloadInfoPO info) {
         subMap.remove(info.getUrl());
-        downInfos.remove(info);
+        mDownInfoList.remove(info);
     }
 
-    private Long mDownloadLength;
-
-    /**
-     * 写入文件
-     */
     public void writeCaches(ResponseBody responseBody, File file, DownloadInfoPO info) {
         RandomAccessFile randomAccessFile = null;
         FileChannel channelOut = null;
         InputStream inputStream = null;
 
-        mDownloadLength = 0L;
+        Long downloadLength = 0L;
 
         try {
             try {
-                if (!file.getParentFile().exists())
-                    file.getParentFile().mkdirs();
+                FileUtils.mkDir(file);
 
-                long allLength = 0 == info.getCountLength() ? responseBody.contentLength() :
-                        info.getReadLength() + responseBody.contentLength();
+                long allLength = 0;
+                if (info.getCountLength() == 0) {
+                    allLength = responseBody.contentLength();
+                } else {
+                    allLength = info.getReadLength() + responseBody.contentLength();
+                }
+
                 inputStream = responseBody.byteStream();
 
                 randomAccessFile = new RandomAccessFile(file, "rwd");
@@ -239,7 +226,7 @@ public class HttpDownManager {
                     }
 
                     mappedBuffer.put(buffer, 0, len);
-                    mDownloadLength += len;
+                    downloadLength += len;
 //                    Log.d("111111111111111111", "downloading progress : " + mDownloadLength
 //                            + " -- allLength : " + allLength);
                 }
