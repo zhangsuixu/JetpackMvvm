@@ -138,6 +138,9 @@ public class HttpDownManager {
         cacheData(info);
     }
 
+    /**
+     * 缓存当前下载进度及下载状态
+     */
     private void cacheData(DownloadInfoPO info) {
         Observable.create(new ObservableOnSubscribe<Object>() {
             @Override
