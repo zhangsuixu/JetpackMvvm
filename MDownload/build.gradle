@@ -32,7 +32,6 @@ android {
 dependencies {
     compileOnly project(path: ':AppUI')
 
-    implementation 'androidx.databinding:databinding-runtime:7.0.3'
 //    implementation 'androidx.databinding:library:3.2.0-alpha11'
 
     //noinspection AnnotationProcessorOnCompilePath
@@ -43,7 +42,8 @@ dependencies {
     annotationProcessor 'androidx.room:room-compiler:2.3.0'
 
     implementation 'com.github.getActivity:XXPermissions:13.2'
-    implementation 'androidx.databinding:databinding-runtime:7.0.3'
+    implementation 'androidx.databinding:databinding-runtime:7.0.4'
 
+    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.3.1'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
 }

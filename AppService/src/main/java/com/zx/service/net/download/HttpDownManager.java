@@ -39,10 +39,6 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-/**
- * http下载处理类
- * Created by WZG on 2016/7/16.
- */
 @SuppressWarnings("rawtypes")
 public class HttpDownManager {
 
@@ -218,7 +214,7 @@ public class HttpDownManager {
                 channelOut = randomAccessFile.getChannel();
                 MappedByteBuffer mappedBuffer = channelOut.map(FileChannel.MapMode.READ_WRITE,
                         info.getReadLength(), allLength - info.getReadLength());
-                byte[] buffer = new byte[1024 * 4];
+                byte[] buffer = new byte[1024 * 8];
                 int len = 0;
                 while (true) {
                     //记录 鸿蒙系统下载过程会异常关闭流(https://yunpan.aliyun.com/downloads/apps/desktop/aDrive.exe?spm=aliyundrive.sign.0.0.13876c75mvMLGM&file=aDrive.exe)

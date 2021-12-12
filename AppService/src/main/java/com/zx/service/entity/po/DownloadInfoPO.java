@@ -1,8 +1,9 @@
 package com.zx.service.entity.po;
 
+import androidx.databinding.Bindable;
+import androidx.databinding.ObservableField;
 import androidx.room.Entity;
 import androidx.room.Ignore;
-import androidx.room.OnConflictStrategy;
 import androidx.room.PrimaryKey;
 
 import com.zx.common.constant.DownState;
@@ -38,6 +39,12 @@ public class DownloadInfoPO {
     /*url*/
     private String url;
 
+//    private ObservableField<String> content = new ObservableField<>();
+
+    @Ignore
+    @Bindable
+    private ObservableField<String> downloadTxt = new ObservableField<>();
+
     @Ignore
     public DownloadInfoPO(String url, HttpDownOnNextListener listener) {
         setUrl(url);
@@ -49,13 +56,13 @@ public class DownloadInfoPO {
         setUrl(url);
     }
 
-    @Ignore
     public DownloadInfoPO() {
         readLength = 0;
         countLength = 0;
         downState = DownState.START.getState();
     }
 
+    @Ignore
     public DownloadInfoPO(long id, String savePath, long countLength, long readLength,
                           int connectionTime, int downState, String url) {
         this.id = id;
@@ -162,5 +169,15 @@ public class DownloadInfoPO {
 
     public void setConnectionTime(int connectionTime) {
         this.connectionTime = connectionTime;
+    }
+
+    @Ignore
+    public ObservableField<String> getDownloadTxt() {
+        return downloadTxt;
+    }
+
+    @Ignore
+    public void setDownloadTxt(ObservableField<String> downloadTxt) {
+        this.downloadTxt = downloadTxt;
     }
 }
