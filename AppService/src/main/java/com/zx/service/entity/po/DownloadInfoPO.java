@@ -39,8 +39,6 @@ public class DownloadInfoPO {
     /*url*/
     private String url;
 
-//    private ObservableField<String> content = new ObservableField<>();
-
     @Ignore
     @Bindable
     private ObservableField<String> downloadTxt = new ObservableField<>();
@@ -84,9 +82,8 @@ public class DownloadInfoPO {
                 return DownState.PAUSE;//暂停
             case 3:
                 return DownState.STOP;//停止
-            case 4:
-                return DownState.ERROR;//错误
-            case 5:
+            case 6:
+                return DownState.UPDATED;//待更新
             default:
                 return DownState.FINISH;//完成
         }

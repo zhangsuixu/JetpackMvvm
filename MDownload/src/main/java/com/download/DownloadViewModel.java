@@ -70,7 +70,6 @@ public class DownloadViewModel extends ViewModel {
                 @Override
                 public void updateProgress(long readLength, long countLength) {
                     Log.d("DownloadActivitydddd", readLength + "--- updateProgress --- " + countLength + "  countLength");
-
                     mDownloadInfoList.get(0).getDownloadTxt().set(readLength + "/" + countLength);
                 }
             });
@@ -108,36 +107,129 @@ public class DownloadViewModel extends ViewModel {
             objects.add(apkApi);
 
             outputFile = new File(Environment.getExternalStoragePublicDirectory
-                    (Environment.DIRECTORY_DOWNLOADS), "b3" + ".apk");
+                    (Environment.DIRECTORY_DOWNLOADS), "c3" + ".apk");
             Log.d("DownloadActivity", "file path :" + outputFile.getAbsolutePath());
             apkApi = new DownloadInfoPO(URL3);
             apkApi.setId(3);
             apkApi.setSavePath(outputFile.getAbsolutePath());
+            apkApi.setListener(new HttpDownOnNextListener() {
+                @Override
+                public void onNext(Object o) {
+
+                }
+
+                @Override
+                public void onStart() {
+
+                }
+
+                @Override
+                public void onComplete() {
+
+                }
+
+                @Override
+                public void updateProgress(long readLength, long countLength) {
+                    Log.d("DownloadActivitydddd", readLength + "--- updateProgress --- " + countLength + "  countLength");
+
+                    mDownloadInfoList.get(2).getDownloadTxt().set(readLength + "/" + countLength);
+                }
+            });
             objects.add(apkApi);
 
             outputFile = new File(Environment.getExternalStoragePublicDirectory
-                    (Environment.DIRECTORY_DOWNLOADS), "b4" + ".apk");
+                    (Environment.DIRECTORY_DOWNLOADS), "c4" + ".apk");
             Log.d("DownloadActivity", "file path :" + outputFile.getAbsolutePath());
             apkApi = new DownloadInfoPO(URL4);
             apkApi.setId(4);
             apkApi.setSavePath(outputFile.getAbsolutePath());
+            apkApi.setListener(new HttpDownOnNextListener() {
+                @Override
+                public void onNext(Object o) {
+
+                }
+
+                @Override
+                public void onStart() {
+
+                }
+
+                @Override
+                public void onComplete() {
+
+                }
+
+                @Override
+                public void updateProgress(long readLength, long countLength) {
+                    Log.d("DownloadActivitydddd", readLength + "--- updateProgress --- " + countLength + "  countLength");
+
+                    mDownloadInfoList.get(3).getDownloadTxt().set(readLength + "/" + countLength);
+                }
+            });
             objects.add(apkApi);
 
             outputFile = new File(Environment.getExternalStoragePublicDirectory
-                    (Environment.DIRECTORY_DOWNLOADS), "b5" + ".apk");
+                    (Environment.DIRECTORY_DOWNLOADS), "c5" + ".apk");
             Log.d("DownloadActivity", "file path :" + outputFile.getAbsolutePath());
             apkApi = new DownloadInfoPO(URL5);
             apkApi.setId(5);
             apkApi.setSavePath(outputFile.getAbsolutePath());
+            apkApi.setListener(new HttpDownOnNextListener() {
+                @Override
+                public void onNext(Object o) {
+
+                }
+
+                @Override
+                public void onStart() {
+
+                }
+
+                @Override
+                public void onComplete() {
+
+                }
+
+                @Override
+                public void updateProgress(long readLength, long countLength) {
+                    Log.d("DownloadActivitydddd", readLength + "--- updateProgress --- " + countLength + "  countLength");
+
+                    mDownloadInfoList.get(4).getDownloadTxt().set(readLength + "/" + countLength);
+                }
+            });
             objects.add(apkApi);
 
             outputFile = new File(Environment.getExternalStoragePublicDirectory
-                    (Environment.DIRECTORY_DOWNLOADS), "b6" + ".apk");
+                    (Environment.DIRECTORY_DOWNLOADS), "c6" + ".apk");
             Log.d("DownloadActivity", "file path :" + outputFile.getAbsolutePath());
             apkApi = new DownloadInfoPO(URL6);
             apkApi.setId(6);
             apkApi.setSavePath(outputFile.getAbsolutePath());
+            apkApi.setListener(new HttpDownOnNextListener() {
+                @Override
+                public void onNext(Object o) {
+
+                }
+
+                @Override
+                public void onStart() {
+
+                }
+
+                @Override
+                public void onComplete() {
+
+                }
+
+                @Override
+                public void updateProgress(long readLength, long countLength) {
+                    Log.d("DownloadActivitydddd", readLength + "--- updateProgress --- " + countLength + "  countLength");
+
+                    mDownloadInfoList.get(5).getDownloadTxt().set(readLength + "/" + countLength);
+                }
+            });
             objects.add(apkApi);
+
             mDownloadInfoList.addAll(objects);
         }
 

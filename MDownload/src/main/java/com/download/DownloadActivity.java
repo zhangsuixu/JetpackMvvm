@@ -21,7 +21,9 @@ import com.zx.common.view.recycleview.BaseRecycleViewHolder;
 import com.zx.service.entity.po.DownloadInfoPO;
 import com.zx.service.net.download.HttpDownManager;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class DownloadActivity extends BaseActivity {
 
@@ -31,6 +33,10 @@ public class DownloadActivity extends BaseActivity {
 
     private BaseAdapter<DownloadInfoPO, RvDownloadListItemBinding> baseAdapter;
 
+    private final List<User> mRunning = new ArrayList<>();
+    private final LinkedBlockingQueue<User> mWaitingQueue = new LinkedBlockingQueue<>();
+    private final LinkedBlockingQueue<User> mRunningQueue = new LinkedBlockingQueue<>();
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,13 +45,121 @@ public class DownloadActivity extends BaseActivity {
         mViewModel = new ViewModelProvider(this).get(DownloadViewModel.class);
         initView();
         requestPermissions();
+
+//        mQueue.add(new User("哇哈哈", "随机数2"));
+//
+//        Log.d("测试测试 ：", mQueue.contains(new User("哇哈哈", "随机数3")) + "-----1");
+//        Log.d("测试测试 ：", mQueue.contains(new User("哇哈", "随机数2")) + "-----2");
+//
+//        mQueue.remove(new User("哇哈哈", "随机数3"));
+//        Log.d("测试测试 ：", mQueue.contains(new User("哇哈哈", "随机数3")) + "-----3");
+
+        test();
     }
+
+    private void test() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    for (int i = 0; i < 30; i++) {
+                        mWaitingQueue.add(new User("线程1存 ：" + i));
+                        Log.d("测试测试 ：", "线程1存 ：" + i);
+                        Thread.sleep(100);
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    Log.d("测试测试 ：", "发生中断");
+                }
+            }
+        }).start();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    for (int i = 0; i < 30; i++) {
+                        mWaitingQueue.add(new User("线程2存 ：" + i));
+                        Log.d("测试测试 ：", "线程2存 ：" + i);
+                        Thread.sleep(150);
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    Log.d("测试测试 ：", "发生中断");
+                }
+            }
+        }).start();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        if (isExit) {
+                            return;
+                        }
+
+                        if (mRunningQueue.size() < 3) {
+                            User take = mWaitingQueue.take();
+                            if (take != null) {
+                                Log.d("测试测试 ：", "向运行队列添加一个数据" + take.name);
+                                mRunningQueue.add(take);
+                            }
+                        }
+                    } catch (InterruptedException e) {
+                        Log.d("测试测试 ：", "发生中断");
+                    }
+
+                }
+            }
+        }).start();
+
+        mThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true)
+                    try {
+                        if (isExit) {
+                            return;
+                        }
+
+                        if (mRunningQueue.size() > 0) {
+                            Log.d("测试测试 ：", "移除数据   移除次数 ：" + (++count));
+                            mRunningQueue.remove();
+                        }
+                        Thread.sleep(200);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        Log.d("测试测试 ：", "发生中断");
+                    }
+            }
+        });
+        mThread.start();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {//
+                while (true) {
+                    if(mRunningQueue.contains(new User("线程2存 ：15"))){
+                        Log.d("测试测试 ：", "查询到指定项");
+                        return;
+                    }
+                }
+            }
+        }).start();
+    }
+
+    private volatile boolean isExit = false;
 
     @Override
-    protected void onStart() {
-        super.onStart();
-
+    protected void onPause() {
+        super.onPause();
+        isExit = true;
     }
+
+    private int count = 0;
+
+    private Thread mThread;
 
     private void initView() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
