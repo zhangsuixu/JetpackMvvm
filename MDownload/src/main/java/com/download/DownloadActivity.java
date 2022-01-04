@@ -140,8 +140,11 @@ public class DownloadActivity extends BaseActivity {
             @Override
             public void run() {//
                 while (true) {
-                    if(mRunningQueue.contains(new User("线程2存 ：15"))){
-                        Log.d("测试测试 ：", "查询到指定项");
+                    if (mRunningQueue.contains(new User("线程2存 ：5"))) {
+                        Log.d("测试测试 ：", "查询到指定项" + mRunningQueue.size() + "---------------------------------------" + mWaitingQueue.size());
+                        mRunningQueue.clear();
+                        mWaitingQueue.clear();
+                        Log.d("测试测试 ：", "查询到指定项" + mRunningQueue.size() + "---------------------------------------" + mWaitingQueue.size());
                         return;
                     }
                 }
